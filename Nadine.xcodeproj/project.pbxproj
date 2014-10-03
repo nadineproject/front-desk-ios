@@ -168,9 +168,11 @@
 				TargetAttributes = {
 					8A8E4E3819DF4FFF00D076C8 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = 756J82MR2R;
 					};
 					8A8E4E5119DF4FFF00D076C8 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = 756J82MR2R;
 						TestTargetID = 8A8E4E3819DF4FFF00D076C8;
 					};
 				};
@@ -365,6 +367,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -376,6 +380,7 @@
 				INFOPLIST_FILE = NadineTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nadine.app/Nadine";
 			};
 			name = Debug;
@@ -384,6 +389,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -391,6 +398,7 @@
 				INFOPLIST_FILE = NadineTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nadine.app/Nadine";
 			};
 			name = Release;
