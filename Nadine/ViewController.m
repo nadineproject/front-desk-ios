@@ -87,4 +87,15 @@
     [self.mainWebView loadRequest:request];
 }
 
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    NSString *host = [request.URL host];
+    if ([host isEqualToString:@"apps.officenomads.com"]) {
+        // Add any of your own domains in the above line
+        return YES;
+    }
+    
+    return NO;
+}
+
 @end
