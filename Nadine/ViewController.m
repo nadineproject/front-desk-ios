@@ -46,14 +46,12 @@
 }
 - (IBAction)refreshButtonTapped:(id)sender {
     [self.mainWebView reload];
-    NSLog(@"Refresh Button Tapped");
 }
 
 - (IBAction)homeButtonTapped:(id)sender {
     NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/members/", NADINE_BASE_URL]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     [self.mainWebView loadRequest:request];
-    NSLog(@"Home Button Tapped");
 }
 
 - (void)clearButtonsAndSetActive:(UIButton *)activeButton {
