@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#define NADINE_BASE_URL @"http://172.16.4.29:8000/"
+#define NADINE_BASE_URL @"http://apps.officenomads.com/"
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
