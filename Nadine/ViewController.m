@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "SettingsViewController.h"
 #define NADINE_BASE_URL @"http://apps.officenomads.com/"
 
 @interface ViewController ()
@@ -21,19 +22,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    [UIApplication sharedApplication].idleTimerDisabled = [self getDayMode];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/", NADINE_BASE_URL]];
+    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/", [self getBaseURL]]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-         if ([data length] > 0 && error == nil) [self.mainWebView loadRequest:request];
-         else if (error != nil) NSLog(@"Error: %@", error);
+         if ([data length] > 0 && error == nil) {
+             [self.mainWebView loadRequest:request];
+         } else if (error != nil) {
+             NSLog(@"Error: %@", error);
+         }
      }];
-    self.mainWebView.scrollView.bounces = NO;
+    
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -49,7 +53,7 @@
 }
 
 - (IBAction)homeButtonTapped:(id)sender {
-    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/members/", NADINE_BASE_URL]];
+    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/members/", [self getBaseURL]]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     [self.mainWebView loadRequest:request];
 }
@@ -68,34 +72,73 @@
 
 - (IBAction)membersButtonTapped:(id)sender {
     [self clearButtonsAndSetActive:(UIButton *)sender];
-    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/members/", NADINE_BASE_URL]];
+    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/members/", [self getBaseURL]]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     [self.mainWebView loadRequest:request];
 }
 
 - (IBAction)hereTodayButtonTapped:(id)sender {
     [self clearButtonsAndSetActive:(UIButton *)sender];
-    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/here_today/", NADINE_BASE_URL]];
+    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/here_today/", [self getBaseURL]]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     [self.mainWebView loadRequest:request];
 }
 
 - (IBAction)visitorsButtonTapped:(id)sender {
     [self clearButtonsAndSetActive:(UIButton *)sender];
-    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/visitors/", NADINE_BASE_URL]];
+    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/visitors/", [self getBaseURL]]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     [self.mainWebView loadRequest:request];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Assuming you've hooked this all up in a Storyboard with a popover presentation style
+    if ([segue.identifier isEqualToString:@"showPopover"]) {
+        SettingsViewController *destNav = segue.destinationViewController;
+        
+        // This is the important part
+        UIPopoverPresentationController *popPC = destNav.popoverPresentationController;
+        popPC.delegate = self;
+    }
+}
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
+    return UIModalPresentationNone;
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSString *host = [request.URL host];
-    if ([host isEqualToString:@"apps.officenomads.com"]) {
+    if ([host isEqualToString:[self getBaseHostName]]) {
         // Add any of your own domains in the above line
         return YES;
     }
     
     return NO;
+}
+
+- (NSString *)getBaseHostName {
+    if ([[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"]) {
+        return [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"];
+    } else {
+        return @"apps.officenomads.com";
+    }
+}
+
+- (NSString *)getBaseURL {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONhostname"]) {
+        return [NSString stringWithFormat:@"http://%@/", [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"]];
+    } else {
+        return NADINE_BASE_URL;
+    }
+}
+
+- (BOOL)getDayMode {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONdayMode"]) {
+        return [[NSUserDefaults standardUserDefaults] stringForKey:@"ONdayMode"];
+    } else {
+        return YES;
+    }
 }
 
 @end
