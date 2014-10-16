@@ -13,6 +13,7 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *topButtons;
+@property (weak, nonatomic) IBOutlet UIButton *membersButton;
 
 
 @end
@@ -53,9 +54,7 @@
 }
 
 - (IBAction)homeButtonTapped:(id)sender {
-    NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/members/", [self getBaseURL]]];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
-    [self.mainWebView loadRequest:request];
+    [self membersButtonTapped:self.membersButton];
 }
 
 - (void)clearButtonsAndSetActive:(UIButton *)activeButton {

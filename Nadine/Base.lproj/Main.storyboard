@@ -197,6 +197,7 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
                         <outlet property="mainWebView" destination="jcV-GG-aPs" id="wqM-Is-DJf"/>
+                        <outlet property="membersButton" destination="Nlr-Tg-FyC" id="dR5-9m-VHX"/>
                         <outletCollection property="topButtons" destination="Nlr-Tg-FyC" id="ZWa-xY-UtY"/>
                         <outletCollection property="topButtons" destination="iFs-Qc-kDI" id="heR-Yj-x4O"/>
                         <outletCollection property="topButtons" destination="VKd-KJ-JTp" id="x9S-Fh-Jft"/>
