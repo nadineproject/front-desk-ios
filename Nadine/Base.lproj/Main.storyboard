@@ -287,7 +287,7 @@
                                         <constraint firstItem="r4R-Di-9xi" firstAttribute="top" secondItem="NXQ-HL-t7a" secondAttribute="top" constant="26" id="srJ-4n-AUV"/>
                                     </constraints>
                                 </view>
-                                <blurEffect style="light"/>
+                                <blurEffect style="extraLight"/>
                             </visualEffectView>
                         </subviews>
                         <constraints>
