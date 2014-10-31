@@ -18,7 +18,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     NSDictionary *userDefaultsDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          [NSNumber numberWithBool:YES], @"ONdayMode",
+                                          @"8:30 AM", @"ONOpeningTime",
+                                          @"6:00 PM", @"ONClosingTime",
                                           @"apps.officenomads.com", @"ONhostname",
                                           nil];
     [[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsDefaults];

@@ -14,7 +14,8 @@
 @property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *topButtons;
 @property (weak, nonatomic) IBOutlet UIButton *membersButton;
-
+@property (strong, nonatomic) NSTimer *screenCheckTimer;
+@property (weak, nonatomic) IBOutlet UINavigationBar *titleBar;
 
 @end
 
@@ -22,8 +23,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    [UIApplication sharedApplication].idleTimerDisabled = [self getDayMode];
+    self.screenCheckTimer = [NSTimer scheduledTimerWithTimeInterval:60
+                                                             target:self
+                                                           selector:@selector(updateIdleTimer)
+                                                           userInfo:nil
+                                                            repeats:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -38,7 +42,7 @@
              NSLog(@"Error: %@", error);
          }
      }];
-    
+    [self updateIdleTimer];
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -132,11 +136,40 @@
     }
 }
 
-- (BOOL)getDayMode {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONdayMode"]) {
-        return [[NSUserDefaults standardUserDefaults] stringForKey:@"ONdayMode"];
+- (void)updateIdleTimer {
+    NSDate *today = [NSDate date];
+    NSDateFormatter *weekFormatter = [[NSDateFormatter alloc] init];
+    [weekFormatter setDateFormat:@"EEEE"];
+    [weekFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSString *dayOfWeek = [weekFormatter stringFromDate:today];
+    
+    if ([dayOfWeek isEqualToString:@"Saturday"] || [dayOfWeek isEqualToString:@"Sunday"]) {
+        //ON is closed on weekends!
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+            return;
+    }
+
+    NSString *openingTimeString = [[NSUserDefaults standardUserDefaults] objectForKey:@"ONOpeningTime"] ? [[NSUserDefaults standardUserDefaults] objectForKey:@"ONOpeningTime"] : @"8:30 AM";
+    NSString *closingTimeString = [[NSUserDefaults standardUserDefaults] objectForKey:@"ONClosingTime"] ? [[NSUserDefaults standardUserDefaults] objectForKey:@"ONClosingTime"] : @"6:00 PM";
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"d-M-Y"];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSDateFormatter *dateTimeFormatter = [[NSDateFormatter alloc] init];
+    [dateTimeFormatter setDateFormat:@"d-M-Y h:mm a"];
+    [dateTimeFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+
+    NSString *todayDateString = [dateFormatter stringFromDate:today];
+    NSDate *todayOpening = [dateTimeFormatter dateFromString:[NSString stringWithFormat:@"%@ %@", todayDateString, openingTimeString]];
+    NSDate *todayClosing = [dateTimeFormatter dateFromString:[NSString stringWithFormat:@"%@ %@", todayDateString, closingTimeString]];
+    NSDate *todayDateAdjusted = [dateTimeFormatter dateFromString:[NSString stringWithFormat:@"%@", [dateTimeFormatter stringFromDate:today]]];
+    
+    if (([todayOpening compare:todayDateAdjusted] == NSOrderedAscending) && ([todayClosing compare:todayDateAdjusted] == NSOrderedDescending)) {
+        //ON is currently OPEN!
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
     } else {
-        return YES;
+        //ON is CLOSED!
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
     }
 }
 

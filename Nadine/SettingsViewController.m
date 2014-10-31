@@ -10,7 +10,8 @@
 
 @interface SettingsViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *hostnameText;
-@property (weak, nonatomic) IBOutlet UISwitch *dayModeSwitch;
+@property (weak, nonatomic) IBOutlet UIDatePicker *openingTimePicker;
+@property (weak, nonatomic) IBOutlet UIDatePicker *closingTimePicker;
 
 @end
 
@@ -18,14 +19,25 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.preferredContentSize = CGSizeMake(280.f, 300.f);
+    self.preferredContentSize = CGSizeMake(300.f, 440.f);
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"h:mm a"];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONhostname"]) {
         self.hostnameText.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"];
     } else {
         self.hostnameText.text = @"apps.officenomads.com";
     }
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONdayMode"]) {
-        self.dayModeSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"ONdayMode"];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONOpeningTime"]) {
+        NSString *openingTime = [[NSUserDefaults standardUserDefaults] objectForKey:@"ONOpeningTime"];
+        self.openingTimePicker.date = [formatter dateFromString:openingTime];
+    } else {
+        self.openingTimePicker.date = [formatter dateFromString:@"8:30 AM"];
+    }
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONClosingTime"]) {
+        NSString *closingTime = [[NSUserDefaults standardUserDefaults] objectForKey:@"ONClosingTime"];
+        self.closingTimePicker.date = [formatter dateFromString:closingTime];
+    } else {
+        self.closingTimePicker.date = [formatter dateFromString:@"6:00 PM"];
     }
     // Do any additional setup after loading the view.
 }
@@ -36,9 +48,15 @@
 }
 
 - (IBAction)saveSettings:(id)sender {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"h:mm a"];
+    NSString *openingTime = [formatter stringFromDate:self.openingTimePicker.date];
+    NSString *closingTime = [formatter stringFromDate:self.closingTimePicker.date];
     [[NSUserDefaults standardUserDefaults] setObject:self.hostnameText.text forKey:@"ONhostname"];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:self.dayModeSwitch.on] forKey:@"ONdayMode"];
-    [UIApplication sharedApplication].idleTimerDisabled = self.dayModeSwitch.on;
+    [[NSUserDefaults standardUserDefaults] setObject:openingTime forKey:@"ONOpeningTime"];
+    [[NSUserDefaults standardUserDefaults] setObject:closingTime forKey:@"ONClosingTime"];
+    
+//    [UIApplication sharedApplication].idleTimerDisabled = self.dayModeSwitch.on;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -55,5 +73,14 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [self.view endEditing:YES];
+    return YES;
+}
+
+- (IBAction)backgroundTapped:(id)sender {
+    [self.view endEditing:YES];
+}
 
 @end
