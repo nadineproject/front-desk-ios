@@ -14,6 +14,9 @@
 @property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *topButtons;
 @property (weak, nonatomic) IBOutlet UIButton *membersButton;
+@property (weak, nonatomic) IBOutlet UIButton *hereTodayButton;
+@property (weak, nonatomic) IBOutlet UIButton *visitorsButton;
+@property (weak, nonatomic) UIButton *currentButton;
 @property (strong, nonatomic) NSTimer *screenCheckTimer;
 @property (weak, nonatomic) IBOutlet UINavigationBar *titleBar;
 
@@ -31,6 +34,7 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     NSURL *nadineURL = [NSURL URLWithString: [NSString stringWithFormat:@"%@tablet/", [self getBaseURL]]];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:nadineURL];
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
@@ -43,6 +47,7 @@
          }
      }];
     [self updateIdleTimer];
+    self.currentButton = self.membersButton;
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -71,6 +76,7 @@
             [currentButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         }
     }
+    self.currentButton = activeButton;
 }
 
 - (IBAction)membersButtonTapped:(id)sender {
@@ -112,6 +118,18 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSString *host = [request.URL host];
+    NSArray *pathParts = [request.URL pathComponents];
+    
+    if (pathParts.count > 2 && [pathParts[2] isEqualToString:@"members"] && self.currentButton != self.membersButton) {
+        [self membersButtonTapped:self.membersButton];
+    }
+    if (pathParts.count > 2 && [pathParts[2] isEqualToString:@"here_today"] && self.currentButton != self.hereTodayButton) {
+        [self membersButtonTapped:self.hereTodayButton];
+    }
+    if (pathParts.count > 2 && [pathParts[2] isEqualToString:@"visitors"] && self.currentButton != self.visitorsButton) {
+        [self membersButtonTapped:self.visitorsButton];
+    }
+    
     if ([host isEqualToString:[self getBaseHostName]]) {
         // Add any of your own domains in the above line
         return YES;
@@ -122,7 +140,12 @@
 
 - (NSString *)getBaseHostName {
     if ([[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"]) {
-        return [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"];
+        NSString *hostname = [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"];
+        if ([hostname rangeOfString:@":"].location != NSNotFound) {
+            return [hostname substringToIndex:[hostname rangeOfString:@":"].location];
+        } else {
+            return hostname;
+        }
     } else {
         return @"apps.officenomads.com";
     }
