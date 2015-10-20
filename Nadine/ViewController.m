@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "SettingsViewController.h"
-#define NADINE_BASE_URL @"http://apps.officenomads.com/"
+#define NADINE_BASE_URL @"https://apps.officenomads.com/"
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
@@ -153,7 +153,7 @@
 
 - (NSString *)getBaseURL {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ONhostname"]) {
-        return [NSString stringWithFormat:@"http://%@/", [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"]];
+        return [NSString stringWithFormat:@"https://%@/", [[NSUserDefaults standardUserDefaults] stringForKey:@"ONhostname"]];
     } else {
         return NADINE_BASE_URL;
     }
